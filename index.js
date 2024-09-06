@@ -5,13 +5,10 @@ import {isUrl} from "check-valid-url"
 import fileSystem from "fs"
 
 var loop = true;
-var imagesDirectory = "./qr-images";
 
 while (loop) {
     await inquirer.prompt (
-        [   {message: "Type the url", name: "url"},
-            {message: "Name the file", name: "fileName"}
-        ],
+        [   {message: "Type the url", name: "url"}]
     ).then(async function(answer) {
         // check url validity
         var url = answer.url;
@@ -19,13 +16,15 @@ while (loop) {
     
         if (isValid) {
             // collect file name
-            var fileName = answer.fileName;
-    
-            // create img file
-            var qr_img = qr.image(url, {type: "png"});
-            qr_img.pipe(fileSystem.createWriteStream(`${imagesDirectory}/${fileName}.png`));
-            console.log("Success. Process is complete");
-            
+            await inquirer.prompt (
+                [{message: "Enter the file name", name: "fileName"}]
+            ).then((answer) => {
+                // create img file
+                var fileName = answer.fileName;
+                var qr_img = qr.image(url, {type: "png"});
+                qr_img.pipe(fileSystem.createWriteStream(`${fileName}.png`));
+                console.log("Success. Process is complete");
+            });
             // ask to go again
             loop = await getYesNo("Success! Go again? (y or n)");
         }
