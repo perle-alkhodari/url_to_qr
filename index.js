@@ -61,6 +61,3 @@ async function getYesNo(message) {
     }
     return response;
 }
-
-
-
